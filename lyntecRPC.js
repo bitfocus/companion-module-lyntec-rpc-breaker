@@ -49,7 +49,7 @@ instance.prototype.init = function () {
 instance.prototype.init_tcp = function () {
 	var self = this;
 
-	var connected = false;
+	// var connected = false;
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
@@ -80,12 +80,12 @@ instance.prototype.init_tcp = function () {
 		});
 
 		self.socket.on('data', function (data) {
-			dataString = data.toString();
-			loginFound = dataString.search("Login:");
-			passFound = dataString.search("Password:");
-			commandPrompt = dataString.search(":>")
+			let dataString = data.toString();
+			let loginFound = dataString.search("Login:");
+			let passFound = dataString.search("Password:");
+			let commandPrompt = dataString.search(":>")
 
-			var dataBytes = [];
+			// var dataBytes = [];
 
 			if(loginFound >= 0){
 				if (self.socket !== undefined && self.socket.connected) {
@@ -132,7 +132,8 @@ instance.prototype.init_tcp = function () {
 			var cleanedString = dataString.replace(/\r|\n|\:\>/g, '');
 			var array = Buffer.from(cleanedString, "hex");
 
-			var dataBytes = []
+			var dataBytes, bytes = []
+			var dataValid;
 			var dataStringStart = false
 			for (let i =0; i < array.length; i++){
 				if(array[i] == 0xB0){
@@ -157,6 +158,7 @@ instance.prototype.init_tcp = function () {
 
 instance.prototype.processBytes = function(bytes){
 	var self = this;
+	var breakerRaw, stateRaw, zoneRaw;
 
 	if(bytes[0] == 0xC8){ //breaker Status(DONE)
 		//B0 C8 1F 02 F0
@@ -239,7 +241,7 @@ instance.prototype.processBytes = function(bytes){
 			self.requestZones();
 		}
 		for (let i =1; i <= numOfBreakers; i++) {
-			byteNum = i+1
+			let byteNum = i+1
 			if(byteNum < bytes.length){
 				value = (bytes[byteNum] & 0x0F)
 
@@ -276,7 +278,7 @@ instance.prototype.processBytes = function(bytes){
 	if(bytes[0] == 0xB9){ //All Zone Status(DONE)
 		self.log('info', "Full Zone Update Recieved");
 
-		sequencing = false;
+		let sequencing = false;
 		var numOfZones = bytes[1]
 		if(self.currentState.internal.zones != numOfZones){
 			self.currentState.internal.zones = numOfZones;
@@ -286,7 +288,7 @@ instance.prototype.processBytes = function(bytes){
 			self.requestBreakers();
 		}
 		for(let i = 1; i <= numOfZones; i++){
-			byteNum = i+1
+			let byteNum = i+1
 			if(byteNum < bytes.length){
 				var value = bytes[byteNum]
 				var state = "N/A"
@@ -707,11 +709,11 @@ instance.prototype.actions = function (system) {
 			label: 'Breaker On',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Breaker',
-					 id: 'breaker',
-					 default: 1,
-					 choices: breakerOptions
+					type: 'dropdown',
+					label: 'Breaker',
+					id: 'breaker',
+					default: 1,
+					choices: breakerOptions
 				}
 			]
 		},
@@ -720,11 +722,11 @@ instance.prototype.actions = function (system) {
 			label: 'Breaker Off',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Breaker',
-					 id: 'breaker',
-					 default: 1,
-					 choices: breakerOptions
+					type: 'dropdown',
+					label: 'Breaker',
+					id: 'breaker',
+					default: 1,
+					choices: breakerOptions
 				}
 			]
 		},
@@ -733,11 +735,11 @@ instance.prototype.actions = function (system) {
 			label: 'Breaker Toggle',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Breaker',
-					 id: 'breaker',
-					 default: 1,
-					 choices: breakerOptions
+					type: 'dropdown',
+					label: 'Breaker',
+					id: 'breaker',
+					default: 1,
+					choices: breakerOptions
 				}
 			]
 		},
@@ -746,11 +748,11 @@ instance.prototype.actions = function (system) {
 			label: 'Zone On',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Zone',
-					 id: 'zone',
-					 default: 1,
-					 choices: zoneOptions
+					type: 'dropdown',
+					label: 'Zone',
+					id: 'zone',
+					default: 1,
+					choices: zoneOptions
 				}
 			]
 		},
@@ -759,11 +761,11 @@ instance.prototype.actions = function (system) {
 			label: 'Zone Off',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Zone',
-					 id: 'zone',
-					 default: 1,
-					 choices: zoneOptions
+					type: 'dropdown',
+					label: 'Zone',
+					id: 'zone',
+					default: 1,
+					choices: zoneOptions
 				}
 			]
 		},
@@ -772,11 +774,11 @@ instance.prototype.actions = function (system) {
 			label: 'Zone Toggle',
 			options: [
 				{
-					 type: 'dropdown',
-					 label: 'Zone',
-					 id: 'zone',
-					 default: 1,
-					 choices: zoneOptions
+					type: 'dropdown',
+					label: 'Zone',
+					id: 'zone',
+					default: 1,
+					choices: zoneOptions
 				}
 			]
 		},
@@ -787,20 +789,21 @@ instance.prototype.action = function (action) {
 	var self = this;
 	var id = action.action;
 	var opt = action.options;
+	var breaker, breakerState, zone, zoneState;
 
-	switch (action.action) {
+	switch (id) {
 		case 'breakerOn':
-			var breaker = parseInt(opt.breaker);
+			breaker = parseInt(opt.breaker);
 			self.breakerChange(breaker, 1);
 			break;
 
 		case 'breakerOff':
-			var breaker = parseInt(opt.breaker);
+			breaker = parseInt(opt.breaker);
 			self.breakerChange(breaker, 0);
 			break;
 
 		case 'breakerToggle':
-			var breaker = parseInt(opt.breaker);
+			breaker = parseInt(opt.breaker);
 			eval("breakerState = self.currentState.dynamicVariables.breaker_"+breaker)
 
 			if (breakerState == "On"){
@@ -812,17 +815,17 @@ instance.prototype.action = function (action) {
 			break;
 
 		case 'zoneOn':
-			var zone = parseInt(opt.zone);
+			zone = parseInt(opt.zone);
 			self.zoneChange(zone, 1);
 			break;
 
 		case 'zoneOff':
-			var zone = parseInt(opt.zone);
+			zone = parseInt(opt.zone);
 			self.zoneChange(zone, 0);
 			break;
 
 		case 'zoneToggle':
-			var zone = parseInt(opt.zone);
+			zone = parseInt(opt.zone);
 			eval("zoneState = self.currentState.dynamicVariables.zone_"+zone)
 			if (zoneState == "On"){
 				self.zoneChange(zone, 0);
@@ -835,14 +838,14 @@ instance.prototype.action = function (action) {
 };
 
 instance.prototype.decimalToHex = function (d, padding) {
-    var hex = Number(d).toString(16);
-    padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+		var hex = Number(d).toString(16);
+		padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
 
-    while (hex.length < padding) {
-        hex = "0" + hex;
-    }
+		while (hex.length < padding) {
+				hex = "0" + hex;
+		}
 
-    return hex;
+		return hex;
 }
 
 instance.prototype.init_feedbacks = function() {
@@ -940,14 +943,13 @@ instance.prototype.init_feedbacks = function() {
 }
 
 instance.prototype.feedback = function(feedback, bank) {
-	var self = this;
 
 	if (feedback.type == 'breaker_state') {
 		var breakerState = "Empty"
 
 		eval("breakerState = self.currentState.dynamicVariables.breaker_"+feedback.options.breaker)
 
-		stateNum = 0;
+		let stateNum = 0;
 		switch (breakerState) {
 			case "Off":
 				stateNum = 1
@@ -977,11 +979,11 @@ instance.prototype.feedback = function(feedback, bank) {
 	}
 
 	if (feedback.type == 'zone_state') {
-		var zoneState = "Off"
+		let zoneState = "Off"
 
 		eval("zoneState = self.currentState.dynamicVariables.zone_"+feedback.options.zone)
 
-		stateNum = 0;
+		let stateNum = 0;
 		switch (zoneState) {
 			case "Off":
 				stateNum = 1
