@@ -85,7 +85,7 @@ instance.prototype.init_tcp = function () {
 			let passFound = dataString.search("Password:");
 			let commandPrompt = dataString.search(":>")
 
-			// var dataBytes = [];
+			var bytes = []
 
 			if(loginFound >= 0){
 				if (self.socket !== undefined && self.socket.connected) {
@@ -95,7 +95,7 @@ instance.prototype.init_tcp = function () {
 				else {
 					self.log('debug', 'Socket not connected :(');
 				}
-				dataBytes = []
+				bytes = []
 				self.stopZoneCheckTimer();
 				self.stopTransmitTimer();
 			}
@@ -108,7 +108,7 @@ instance.prototype.init_tcp = function () {
 				else {
 					self.log('debug', 'Socket not connected :(');
 				}
-				dataBytes = [];
+				bytes = [];
 				self.stopZoneCheckTimer();
 			}
 			else if(commandPrompt >= 0){
@@ -132,8 +132,7 @@ instance.prototype.init_tcp = function () {
 			var cleanedString = dataString.replace(/\r|\n|\:\>/g, '');
 			var array = Buffer.from(cleanedString, "hex");
 
-			var dataBytes, bytes = []
-			var dataValid;
+
 			var dataStringStart = false
 			for (let i =0; i < array.length; i++){
 				if(array[i] == 0xB0){
@@ -142,7 +141,6 @@ instance.prototype.init_tcp = function () {
 				}
 				else if(array[i] == 0xF0){
 					if(dataStringStart & (array.length >= 2)){
-						dataValid = true
 						self.processBytes(bytes)
 					}
 					bytes = []
@@ -158,7 +156,7 @@ instance.prototype.init_tcp = function () {
 
 instance.prototype.processBytes = function(bytes){
 	var self = this;
-	var breakerRaw, stateRaw, zoneRaw;
+	var breakerRaw, stateRaw, zoneRaw, state;
 
 	if(bytes[0] == 0xC8){ //breaker Status(DONE)
 		//B0 C8 1F 02 F0
@@ -245,7 +243,7 @@ instance.prototype.processBytes = function(bytes){
 			if(byteNum < bytes.length){
 				value = (bytes[byteNum] & 0x0F)
 
-				var state = ""
+				state = ""
 				switch (value) {
 					case 1:
 						state = "Off"
@@ -291,7 +289,7 @@ instance.prototype.processBytes = function(bytes){
 			let byteNum = i+1
 			if(byteNum < bytes.length){
 				var value = bytes[byteNum]
-				var state = "N/A"
+				state = "N/A"
 				switch (value) {
 					case 1:
 						state = "Off"
@@ -320,10 +318,6 @@ instance.prototype.processBytes = function(bytes){
 	}//All Zone Status
 }
 
-instance.prototype.requestZone = function(zone) {//request zone status
-	var self = this;
-	self.commands.push("B0B9F0");
-}
 instance.prototype.requestZones = function() {//request zone status
 	var self = this;
 	self.commands.push("B0B9F0");
@@ -483,9 +477,10 @@ instance.prototype.initVariables = function() {
 	self.emptyCurrentState();
 
 	var variables = [];
+	var element = {}
 
 	for (let i =1; i <= self.currentState.internal.breakers; i++) {
-		var element = {
+		element = {
 			label: 'Breaker #'+i+' State',
 			name:  'breaker_'+i
 		}
@@ -493,7 +488,7 @@ instance.prototype.initVariables = function() {
 	}
 
 	for (let i =1; i <= self.currentState.internal.zones; i++) {
-		var element = {
+		element = {
 			label: 'Zone #'+i+' State',
 			name:  'zone_'+i
 		}
@@ -577,9 +572,10 @@ instance.prototype.init_presets = function () {
 	var self = this;
 
 	var presets = []
+	var element = {}
 
 	for (let i =1; i <= self.currentState.internal.breakers; i++) {
-		var element = {
+		element = {
 			category: 'Breaker Toggle',
 			label: 'This button tells breaker '+i+' to toggle its state depending on the recieved state.',
 			bank: {
@@ -641,7 +637,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	for (let i =1; i <= self.currentState.internal.zones; i++) {
-		var element = {
+		element = {
 			category: 'Zone Toggle',
 			label: 'This button tells zone '+i+' to toggle its state depending on the recieved state.',
 			bank: {
@@ -689,16 +685,17 @@ instance.prototype.init_presets = function () {
 
 instance.prototype.actions = function (system) {
 	var self = this;
+	var element = {}
 
 	var zoneOptions = []
 	for (let i =1; i <= self.currentState.internal.zones; i++) {
-		var element = { id: i, label: i.toString() };
+		element = { id: i, label: i.toString() };
 		zoneOptions.push(element)
 	}
 
 	var breakerOptions = []
 	for (let i =1; i <= self.currentState.internal.breakers; i++) {
-		var element = { id: i, label: i.toString() };
+		element = { id: i, label: i.toString() };
 		breakerOptions.push(element)
 	}
 
@@ -943,6 +940,7 @@ instance.prototype.init_feedbacks = function() {
 }
 
 instance.prototype.feedback = function(feedback, bank) {
+	var self = this;
 
 	if (feedback.type == 'breaker_state') {
 		var breakerState = "Empty"
