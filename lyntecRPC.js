@@ -188,7 +188,7 @@ instance.prototype.processBytes = function(bytes){
 						break;
 				}
 
-				self.log('debug', 'Breaker '+breakerRaw+' is now '+state)
+//				self.log('debug', 'Breaker '+breakerRaw+' is now '+state)
 				self.updateVariable('breaker_'+breakerRaw, state);
 			}
 			else{
@@ -218,7 +218,7 @@ instance.prototype.processBytes = function(bytes){
 						break;
 				}
 
-				self.log('debug', 'Zone '+zoneRaw+' is now '+state)
+//				self.log('debug', 'Zone '+zoneRaw+' is now '+state)
 				self.updateVariable('zone_'+zoneRaw, state);
 			}
 			else{
@@ -229,7 +229,7 @@ instance.prototype.processBytes = function(bytes){
 	}//Zone Status
 
 	if(bytes[0] == 0xB6){ //All Breaker Status (DONE)
-		self.log('info', "Full Breaker Update Recieved");
+//		self.log('info', "Full Breaker Update Recieved");
 		var numOfBreakers = bytes[1]
 		if(self.currentState.internal.breakers != numOfBreakers){
 			self.currentState.internal.breakers = numOfBreakers;
@@ -266,7 +266,7 @@ instance.prototype.processBytes = function(bytes){
 					default :
 						break;
 				}
-				self.log('debug', 'Breaker '+i+' is now '+state)
+//				self.log('debug', 'Breaker '+i+' is now '+state)
 				self.updateVariable('breaker_'+i, state);
 			}
 		}
@@ -274,7 +274,7 @@ instance.prototype.processBytes = function(bytes){
 	}//All Breaker Status
 
 	if(bytes[0] == 0xB9){ //All Zone Status(DONE)
-		self.log('info', "Full Zone Update Recieved");
+//		self.log('info', "Full Zone Update Recieved");
 
 		let sequencing = false;
 		var numOfZones = bytes[1]
@@ -304,7 +304,7 @@ instance.prototype.processBytes = function(bytes){
 					default :
 						break;
 				}
-				self.log('debug', 'Zone '+i+' is now '+state)
+//				self.log('debug', 'Zone '+i+' is now '+state)
 				self.updateVariable('zone_'+i, state);
 			}
 		}
@@ -368,8 +368,8 @@ instance.prototype.startZoneCheckTimer = function(timeout) {
 instance.prototype.stopZoneCheckTimer = function() {
 	var self = this;
 
-	self.log('info', "Stopping zoneCheckTimer");
 	if (self.zoneCheckTimer !== undefined) {
+		self.log('info', "Stopping zoneCheckTimer");
 		clearInterval(self.zoneCheckTimer);
 		delete self.zoneCheckTimer;
 	}
@@ -392,8 +392,8 @@ instance.prototype.startTransmitTimer = function(timeout) {
 instance.prototype.stopTransmitTimer = function() {
 	var self = this;
 
-	self.log('info', "Stopping transmitTimer");
 	if (self.transmitTimer !== undefined) {
+		self.log('info', "Stopping transmitTimer");
 		clearInterval(self.transmitTimer);
 		delete self.transmitTimer;
 	}
