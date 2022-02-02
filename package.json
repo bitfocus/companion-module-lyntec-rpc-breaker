@@ -14,5 +14,13 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Todd Murphy <todd@kingdomprod.com>",
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-lyntec-rpc-breaker#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-lyntec-rpc-breaker/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-lyntec-rpc-breaker.git"
+	}
 }
