@@ -700,7 +700,7 @@ instance.prototype.actions = function (system) {
 	}
 
 
-	self.system.emit('instance_actions', self.id, {
+	self.setActions({
 
 		'breakerOn': {
 			label: 'Breaker On',
