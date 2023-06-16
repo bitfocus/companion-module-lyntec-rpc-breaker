@@ -1,26 +1,19 @@
 {
 	"name": "lyntec-rpc-breaker",
-	"version": "1.0.5",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Electrical Sequencer"
-	],
-	"manufacturer": "LynTec",
-	"product": "LynTec RPC",
-	"shortname": "LynTec",
-	"description": "LynTec RPC plugin for Companion",
-	"main": "lyntecRPC.js",
+	"version": "2.0.0",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Todd Murphy <todd@kingdomprod.com>",
 	"license": "MIT",
-	"homepage": "https://github.com/bitfocus/companion-module-lyntec-rpc-breaker#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-lyntec-rpc-breaker/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-lyntec-rpc-breaker.git"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.4.1"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^1.3.1"
 	}
 }
