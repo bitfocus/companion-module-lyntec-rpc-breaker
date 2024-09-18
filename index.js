@@ -23,38 +23,38 @@ class lyntecInstance extends InstanceBase {
 			...api,
 		})
 
-		this.INTERVAL = null; //used to poll the device every second
+		this.INTERVAL = null //used to poll the device every second
 
-		this.socket = undefined; //used for TCP communication
+		this.socket = undefined //used for TCP communication
 
-		this.commands = [];
-		this.transmitOK = false;
-		this.connected = false;
-		this.transmitTimer = undefined;
-		this.zoneCheckTimer = undefined;
+		this.commands = []
+		this.transmitOK = false
+		this.connected = false
+		this.transmitTimer = undefined
+		this.zoneCheckTimer = undefined
 		this.zoneCheckLastTimeout = 0
 
 		this.currentState = {
-			internal : {},
-			dynamicVariables : {},
-		};
+			internal: {},
+			dynamicVariables: {},
+		}
 	}
 
 	async destroy() {
-		let self = this;
+		let self = this
 
 		if (self.INTERVAL) {
-			clearInterval(self.INTERVAL);
-			self.INTERVAL = null;
+			clearInterval(self.INTERVAL)
+			self.INTERVAL = null
 		}
 
 		if (self.socket !== undefined) {
-			self.socket.send("q\r\n");
-			self.socket.destroy();
+			self.socket.send('q\r\n')
+			self.socket.destroy()
 		}
-	
-		self.stopZoneCheckTimer();
-		self.stopTransmitTimer();
+
+		self.stopZoneCheckTimer()
+		self.stopTransmitTimer()
 	}
 
 	async init(config) {
@@ -65,21 +65,21 @@ class lyntecInstance extends InstanceBase {
 		this.config = config
 
 		if (this.config.verbose) {
-			this.log('info', 'Verbose mode enabled. Log entries will contain detailed information.');
+			this.log('info', 'Verbose mode enabled. Log entries will contain detailed information.')
 		}
-	
-		this.updateStatus(InstanceStatus.Connecting);
 
-		this.init_tcp();
+		this.updateStatus(InstanceStatus.Connecting)
 
-		this.initActions();
-		this.initFeedbacks();
-		this.initVariables();
-		this.initPresets();
-	
-		this.checkFeedbacks();
-		this.checkVariables();
+		this.init_tcp()
+
+		this.initActions()
+		this.initFeedbacks()
+		this.initVariables()
+		this.initPresets()
+
+		this.checkFeedbacks()
+		this.checkVariables()
 	}
 }
 
-runEntrypoint(lyntecInstance, UpgradeScripts);
+runEntrypoint(lyntecInstance, UpgradeScripts)

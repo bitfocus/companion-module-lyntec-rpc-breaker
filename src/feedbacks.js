@@ -1,20 +1,20 @@
-const { combineRgb } = require('@companion-module/base');
+const { combineRgb } = require('@companion-module/base')
 
 module.exports = {
 	initFeedbacks: function () {
-		let self = this;
-		let feedbacks = {};
+		let self = this
+		let feedbacks = {}
 
 		const foregroundColor = combineRgb(255, 255, 255) // White
 		const backgroundColorRed = combineRgb(255, 0, 0) // Red
 
 		let zoneOptions = []
-		for (let i =1; i <= self.currentState.internal.zones; i++) {
+		for (let i = 1; i <= self.currentState.internal.zones; i++) {
 			zoneOptions.push({ id: i, label: i })
 		}
 
 		let breakerOptions = []
-		for (let i =1; i <= self.currentState.internal.breakers; i++) {
+		for (let i = 1; i <= self.currentState.internal.breakers; i++) {
 			breakerOptions.push({ id: i, label: i })
 		}
 
@@ -28,7 +28,7 @@ module.exports = {
 					label: 'Breaker',
 					id: 'breaker',
 					default: 1,
-					choices: breakerOptions
+					choices: breakerOptions,
 				},
 				{
 					type: 'dropdown',
@@ -36,56 +36,56 @@ module.exports = {
 					id: 'state',
 					default: 1,
 					choices: [
-						{ id: 2, label: "On" },
-						{ id: 1, label: "Off" },
-						{ id: 3, label: "Tripped" },
-						{ id: 4, label: "Faulted" },
-						{ id: 5, label: "Empty" },
-						{ id: 6, label: "Manualy On"}
-					]
-				}
+						{ id: 2, label: 'On' },
+						{ id: 1, label: 'Off' },
+						{ id: 3, label: 'Tripped' },
+						{ id: 4, label: 'Faulted' },
+						{ id: 5, label: 'Empty' },
+						{ id: 6, label: 'Manualy On' },
+					],
+				},
 			],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 0)
+				bgcolor: combineRgb(255, 0, 0),
 			},
-			callback: async function(feedback) {
-				let state = feedback.options.state;
-	
-				let breakerState = self.currentState.dynamicVariables['breaker_'+feedback.options.breaker];
-	
-				let stateNum = 5;
-				
+			callback: async function (feedback) {
+				let state = feedback.options.state
+
+				let breakerState = self.currentState.dynamicVariables['breaker_' + feedback.options.breaker]
+
+				let stateNum = 5
+
 				switch (breakerState) {
-					case "Off":
+					case 'Off':
 						stateNum = 1
-						break;
-					case "On":
+						break
+					case 'On':
 						stateNum = 2
-						break;
-					case "Tripped":
+						break
+					case 'Tripped':
 						stateNum = 3
-						break;
-					case "Faulty":
+						break
+					case 'Faulty':
 						stateNum = 4
-						break;
-					case "Empty":
+						break
+					case 'Empty':
 						stateNum = 5
-						break;
-					case "Manually On":
+						break
+					case 'Manually On':
 						stateNum = 6
-						break;
+						break
 					default:
-						break;
+						break
 				}
-	
+
 				if (stateNum == state) {
-					return true;
+					return true
 				}
-	
-				return false;
-			}
-		};
+
+				return false
+			},
+		}
 
 		feedbacks['zone_state'] = {
 			type: 'boolean',
@@ -97,7 +97,7 @@ module.exports = {
 					label: 'Zone',
 					id: 'zone',
 					default: 1,
-					choices: zoneOptions
+					choices: zoneOptions,
 				},
 				{
 					type: 'dropdown',
@@ -105,45 +105,45 @@ module.exports = {
 					id: 'state',
 					default: 1,
 					choices: [
-						{ id: 2, label: "On" },
-						{ id: 1, label: "Off" },
-						{ id: 3, label: "Sequencing" },
-					]
-				}
+						{ id: 2, label: 'On' },
+						{ id: 1, label: 'Off' },
+						{ id: 3, label: 'Sequencing' },
+					],
+				},
 			],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 0)
+				bgcolor: combineRgb(255, 0, 0),
 			},
-			callback: async function(feedback) {
-				let state = feedback.options.state;
-	
-				let zoneState = self.currentState.dynamicVariables['zone_'+feedback.options.zone];
-	
-				let stateNum = 1;
-				
-				switch (zoneState) {
-					case "Off":
-						stateNum = 1
-						break;
-					case "On":
-						stateNum = 2
-						break;
-					case "Sequencing":
-						stateNum = 3
-						break;
-					default:
-						break;
-				}
-	
-				if (stateNum == state) {
-					return true;
-				}
-	
-				return false;
-			}
-		};
+			callback: async function (feedback) {
+				let state = feedback.options.state
 
-		self.setFeedbackDefinitions(feedbacks);
-	}
+				let zoneState = self.currentState.dynamicVariables['zone_' + feedback.options.zone]
+
+				let stateNum = 1
+
+				switch (zoneState) {
+					case 'Off':
+						stateNum = 1
+						break
+					case 'On':
+						stateNum = 2
+						break
+					case 'Sequencing':
+						stateNum = 3
+						break
+					default:
+						break
+				}
+
+				if (stateNum == state) {
+					return true
+				}
+
+				return false
+			},
+		}
+
+		self.setFeedbackDefinitions(feedbacks)
+	},
 }

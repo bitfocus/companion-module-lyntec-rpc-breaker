@@ -2,7 +2,7 @@ const { Regex } = require('@companion-module/base')
 
 module.exports = {
 	getConfigFields() {
-		let self = this;
+		let self = this
 
 		return [
 			{
@@ -10,26 +10,26 @@ module.exports = {
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: 'This module allows control of LynTec RPC panels running version 1.01 of the LynTec Telnet Server'
+				value: 'This module allows control of LynTec RPC panels running version 1.01 of the LynTec Telnet Server',
 			},
 			{
 				type: 'textinput',
 				id: 'host',
 				label: 'IP of LynTec RPC Panel',
 				width: 6,
-				regex: Regex.IP
+				regex: Regex.IP,
 			},
 			{
 				type: 'textinput',
 				id: 'user',
 				label: 'Username of LynTec RPC Panel',
-				width: 6
+				width: 6,
 			},
 			{
 				type: 'textinput',
 				id: 'pass',
 				label: 'Password of LynTec RPC Panel',
-				width: 6
+				width: 6,
 			},
 			/*{
 				type: 'static-text',
@@ -50,5 +50,5 @@ module.exports = {
 				width: 12
 			},*/
 		]
-	}
+	},
 }
