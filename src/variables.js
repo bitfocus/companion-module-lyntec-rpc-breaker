@@ -29,8 +29,6 @@ module.exports = {
 		try {
 			let variableObj = {}
 
-			console.log(self.currentState.dynamicVariables)
-
 			for (let i = 1; i <= self.currentState.internal.breakers; i++) {
 				variableObj['breaker_' + i] = self.currentState.dynamicVariables['breaker_' + i]
 			}
