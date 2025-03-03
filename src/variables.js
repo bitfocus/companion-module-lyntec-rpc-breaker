@@ -29,11 +29,13 @@ module.exports = {
 		try {
 			let variableObj = {}
 
-			for (let i = 1; i <= self.currentState.dynamicVariables.breakers; i++) {
+			console.log(self.currentState.dynamicVariables)
+
+			for (let i = 1; i <= self.currentState.internal.breakers; i++) {
 				variableObj['breaker_' + i] = self.currentState.dynamicVariables['breaker_' + i]
 			}
 
-			for (let i = 1; i <= self.currentState.dynamicVariables.zones; i++) {
+			for (let i = 1; i <= self.currentState.internal.zones; i++) {
 				variableObj['zone_' + i] = self.currentState.dynamicVariables['zone_' + i]
 			}
 

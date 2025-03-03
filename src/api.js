@@ -127,8 +127,9 @@ module.exports = {
 		let breakerRaw, stateRaw, zoneRaw, state
 
 		if (bytes[0] == 0xc8) {
-			//breaker Status
+			// Breaker Status
 			//B0 C8 1F 02 F0
+			self.log('debug', 'Processing Breaker Status')
 			for (let i = 1; i <= bytes.length; ) {
 				if (bytes.length - i >= 2) {
 					breakerRaw = bytes[i++]
@@ -167,7 +168,8 @@ module.exports = {
 		} //breaker Status
 
 		if (bytes[0] == 0xc9) {
-			//Zone Status
+			// Zone Status
+			self.log('debug', 'Processing Zone Status')
 			for (let i = 1; i <= bytes.length; ) {
 				if (bytes.length - i >= 2) {
 					zoneRaw = bytes[i++]
@@ -197,13 +199,14 @@ module.exports = {
 		} //Zone Status
 
 		if (bytes[0] == 0xb6) {
-			//All Breaker Status
+			// All Breaker Status
+			self.log('debug', 'Processing All Breaker Status')
 			let numOfBreakers = bytes[1]
 			if (self.currentState.internal.breakers != numOfBreakers) {
 				self.currentState.internal.breakers = numOfBreakers
 				self.initVariables()
-				self.actions()
-				self.init_feedbacks()
+				self.initActions()
+				self.initFeedbacks()
 				self.requestZones()
 			}
 			for (let i = 1; i <= numOfBreakers; i++) {
@@ -243,14 +246,15 @@ module.exports = {
 		} //All Breaker Status
 
 		if (bytes[0] == 0xb9) {
-			//All Zone Status
+			// All Zone Status
+			self.log('debug', 'Processing All Zone Status')
 			let sequencing = false
 			let numOfZones = bytes[1]
 			if (self.currentState.internal.zones != numOfZones) {
 				self.currentState.internal.zones = numOfZones
 				self.initVariables()
-				self.actions()
-				self.init_feedbacks()
+				self.initActions()
+				self.initFeedbacks()
 				self.requestBreakers()
 			}
 			for (let i = 1; i <= numOfZones; i++) {
@@ -371,9 +375,8 @@ module.exports = {
 		if (self.transmitOK) {
 			if (self.commands.length) {
 				let command = self.commands.shift()
-				if (self.socket !== undefined && self.socket.connected) {
+				if (self.socket !== undefined && self.socket.isConnected) {
 					self.socket.send(command + '\r\n')
-					self.log('debug', 'Sent Username')
 				} else {
 					self.log('debug', 'Socket not connected :(')
 				}
