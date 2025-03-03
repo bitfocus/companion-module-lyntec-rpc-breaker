@@ -18,8 +18,7 @@ module.exports = {
 			self.socket = new TCPHelper(self.config.host, self.config.port)
 
 			self.socket.on('error', function (err) {
-				self.log('debug', 'Network error', err)
-				self.updateStatus(InstanceStatus.ConnectionFailure, err)
+				self.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 				self.log('error', 'Network error: ' + err.message)
 			})
 
@@ -72,7 +71,7 @@ module.exports = {
 					self.transmitOK = true
 				}
 
-				let cleanedString = dataString.replace(/\r|\n|\:\>/g, '')
+				let cleanedString = dataString.replace(/\r|\n|:>/g, '')
 				let array = Buffer.from(cleanedString, 'hex')
 
 				let dataStringStart = false
@@ -210,7 +209,7 @@ module.exports = {
 			for (let i = 1; i <= numOfBreakers; i++) {
 				let byteNum = i + 1
 				if (byteNum < bytes.length) {
-					value = bytes[byteNum] & 0x0f
+					let value = bytes[byteNum] & 0x0f
 
 					state = ''
 					switch (value) {
